@@ -3,7 +3,7 @@ from time import sleep
 from random import randrange, choice
 from list_manipulation_functions import *
 
-FPS = 1
+FPS = 3
 run = True
 
 board = [
@@ -42,8 +42,7 @@ def move(key):
                         row.insert(0, 0)
                     if key == "l":
                         row.append(0)
-            board.pop(i)
-            board.insert(i, row)
+            board[i] = row
     
     if key in ("u", "d"):
         board = rotate(board)
@@ -58,10 +57,9 @@ def move(key):
                         column.insert(0, 0)
                     if key == "u":
                         column.append(0)
-            board.pop(i)
-            board.insert(i, column)
+            board[i] = column
         board = rotate(board)
-                
+
 
 def merge(key):
     global board
