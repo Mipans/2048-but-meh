@@ -108,7 +108,7 @@ def merge(key):
 def draw(board):
     for y in range(len(board)):
         print("".join(str(board[y])).replace(",", "  ").replace("0", " "))
-    print("\n\n")
+    print("\n")
 
                 
 
