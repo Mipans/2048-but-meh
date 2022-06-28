@@ -106,9 +106,28 @@ def merge(key):
 
 
 def draw(board):
+    text = ""
+    list = []
+    lenght = 0
+
     for y in range(len(board)):
-        print("".join(str(board[y])).replace(",", "  ").replace("0", " "))
-    print("\n")
+        for x in range(len(board[y])):
+            if lenght < len(str(board[y][x])):
+                lenght = len(str(board[y][x]))
+
+    for y in range(len(board)):
+        list.append("[")
+        for x in range(len(board[y])):
+            cell = str(board[y][x])
+            c = " "*((lenght - len(cell))//2) + cell + " "*(lenght - len(cell) - (lenght - len(cell))//2)
+            list.append(c.replace("0", "_"))
+            list.append(" ")
+        list.append("]\n")
+    
+    for t in list:
+        text += t
+    
+    print(f"{text}\n")
 
                 
 
