@@ -5,13 +5,23 @@ from list_manipulation_functions import *
 
 FPS = 3
 run = True
+'''
+board = [
+        [131072, 65536, 32768, 16384],
+        [8192, 4096, 2048, 1024],
+        [64, 128, 256, 512],
+        [32, 16, 0, 0]
+    ]
+'''
 
 board = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-    ]
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0],
+    [0, 0, 0, 0]
+]
+
+savedBoard = board
 
 
 def spawn():
@@ -22,9 +32,12 @@ def spawn():
             if board[y][x] == 0:
                 list.append([y, x])
     
-    cell = list[randrange(0, len(list)-1)]
+    if len(list) <= 1:
+        cell = list[0]
+    else:
+        cell = list[randrange(0, len(list)-1)]
     board[cell[0]].pop(cell[1])
-    board[cell[0]].insert(cell[1], choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4]))
+    board[cell[0]].insert(cell[1], choice([4]))
 
 
 def move(key):
@@ -119,17 +132,17 @@ def draw(board):
         list.append("[")
         for x in range(len(board[y])):
             cell = str(board[y][x])
+            if cell == "0":
+                cell = "_"
             c = " "*((lenght - len(cell))//2) + cell + " "*(lenght - len(cell) - (lenght - len(cell))//2)
-            list.append(c.replace("0", "_"))
+            list.append(c)
             list.append(" ")
         list.append("]\n")
     
     for t in list:
         text += t
-    
+    text.replace("0", "_")
     print(f"{text}\n")
-
-                
 
 
 def quit():
