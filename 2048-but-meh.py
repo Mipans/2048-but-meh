@@ -37,7 +37,7 @@ def spawn():
     else:
         cell = list[randrange(0, len(list)-1)]
     board[cell[0]].pop(cell[1])
-    board[cell[0]].insert(cell[1], choice([4]))
+    board[cell[0]].insert(cell[1], choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4]))
 
 
 def move(key):
