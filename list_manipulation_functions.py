@@ -1,9 +1,9 @@
 
 def rotate(oldList):
     newList = []
-    for x in range(4):
+    for x in range(len(oldList)):
         column = []
-        for y in range(4):
+        for y in range(len(oldList[x])):
             column.append(oldList[y][x])
         newList.append(column)
     return newList

@@ -3,7 +3,7 @@ from time import sleep
 from random import randrange, choice
 from list_manipulation_functions import *
 
-FPS = 3
+FPS = 60
 run = True
 '''
 board = [
@@ -13,13 +13,11 @@ board = [
         [32, 16, 0, 0]
     ]
 '''
-
-board = [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0]
-]
+(board, boardLen) = ([], 4)
+for y in range(boardLen):
+    board.append([])
+    for x in range(boardLen):
+        board[y].append(0)
 
 savedBoard = board
 
@@ -71,7 +69,7 @@ def move(key):
                     if key == "u":
                         column.append(0)
             board[i] = column
-        board = rotate(board)
+        board = rotate(board)   
 
 
 def merge(key):
@@ -161,17 +159,29 @@ def main():
             break
         
         if is_pressed("right"):
-            pressed = "r"
+            if pressed == "r":
+                pressed = "rr"
+            elif pressed != "rr":
+                pressed = "r"
         elif is_pressed("left"):
-            pressed = "l"
+            if pressed == "l":
+                pressed = "ll"
+            elif pressed != "ll":
+                pressed = "l"
         elif is_pressed("up"):
-            pressed = "u"
+            if pressed == "u":
+                pressed = "uu"
+            elif pressed != "uu":
+                pressed = "u"
         elif is_pressed("down"):
-            pressed = "d"
+            if pressed == "d":
+                pressed = "dd"
+            elif pressed != "dd":
+                pressed = "d"
         else:
             pressed = ""
 
-        if pressed != "":
+        if pressed in ("r", "l", "u", "d"):
             move(pressed)
             merge(pressed)
             move(pressed)
