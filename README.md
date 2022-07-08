@@ -1,5 +1,7 @@
 # 2048 but meh
-please don't do illegal moves, i didn't add a way to check legal moves to spawn a new number cus im stupid :p 
+you CAN do illegal moves! i DID add a way to check legal moves to spawn a new number cus im actually not that stupid 
+
+:D
 
 # Requirements
 - python 3
@@ -7,4 +9,4 @@ please don't do illegal moves, i didn't add a way to check legal moves to spawn 
 - a keyboard
 
 # Known Issues
-- no way of checking if a move was legal in order to spawn a new number
+- when you press a movement key even it isn't a legal move, and the board actually doesn't change, it still saves the board making it impossible to undo.

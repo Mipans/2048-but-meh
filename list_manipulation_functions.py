@@ -28,6 +28,15 @@ def mirror_y(oldList):
         newList.insert(0, row)
     return newList
 
+
+def legal(list1, list2):
+    for y in range(len(list1)):
+        for x in range(len(list1[y])):
+            if list2[y][x] != list1[y][x]:
+                return True
+    return False
+
+
 def draw(oldList):
     text = ""
     list = []

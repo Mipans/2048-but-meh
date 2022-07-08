@@ -1,7 +1,7 @@
 from keyboard import is_pressed
 from time import sleep
 from random import randrange, choice
-from list_manipulation_functions import *
+from list_manipulation_functions import rotate, legal
 
 FPS = 60
 run = True
@@ -13,13 +13,13 @@ board = [
         [32, 16, 0, 0]
     ]
 '''
-(board, boardLen) = ([], 4)
+(board, savedBoard, boardLen) = ([], [], 4)
 for y in range(boardLen):
     board.append([])
+    savedBoard.append([])
     for x in range(boardLen):
         board[y].append(0)
-
-savedBoard = board
+        savedBoard[y].append(0)
 
 
 def spawn():
@@ -38,8 +38,19 @@ def spawn():
     board[cell[0]].insert(cell[1], choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4]))
 
 
-def move(key):
-    global board
+def move(key, n):
+    global board, suc
+    if n == 1:
+        suc = False
+    oldBoard = []
+    for y in range(boardLen):
+        oldBoard.append([])
+        for x in range(boardLen):
+            oldBoard[y].append(0)
+    
+    for y in range(len(board)):
+        for x in range(len(board[y])):
+            oldBoard[y][x] = board[y][x]
 
     if key in ("r", "l"):
         for i in range(len(board)):
@@ -69,7 +80,12 @@ def move(key):
                     if key == "u":
                         column.append(0)
             board[i] = column
-        board = rotate(board)   
+        board = rotate(board)
+
+    for y in range(len(board)):
+        for x in range(len(board[y])):
+            if board[y][x] != oldBoard[y][x]:
+                suc = True
 
 
 def merge(key):
@@ -162,6 +178,7 @@ def quit():
 def main():
     spawn()
     draw(board)
+    suc = False
     
     while run:
         quit()
@@ -198,11 +215,13 @@ def main():
 
         if pressed in ("r", "l", "u", "d"):
             save(board)
-            move(pressed)
+            move(pressed, 1)
             merge(pressed)
-            move(pressed)
-            spawn()
-            draw(board)
+            move(pressed, 2)
+            suc = legal(board, savedBoard)
+            if suc:
+                spawn()
+                draw(board)
         elif pressed == "b":
             undo(savedBoard)
             draw(board)
