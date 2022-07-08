@@ -28,6 +28,22 @@ def mirror_y(oldList):
         newList.insert(0, row)
     return newList
 
+def draw(oldList):
+    text = ""
+    list = []
+    
+    for y in range(len(oldList)):
+        list.append("[")
+        for x in range(len(oldList[y])):
+            cell = str(oldList[y][x])
+            list.append(cell)
+            list.append(" ")
+        list.append("]\n")
+    
+    for t in list:
+        text += t
+    print(f"{text}\n")
+
 
 def main():
     board = [
@@ -42,6 +58,9 @@ def main():
     print("\n\n " + str(mirror_y(board)).replace(",", "").replace("[[", "[").replace("]]", "]").replace("]", "]\n"))
     print("\n\n " + str(mirror_y(mirror_x(board))).replace(",", "").replace("[[", "[").replace("]]", "]").replace("]", "]\n"))
     print("\n\n " + str(rotate(board)).replace(",", "").replace("[[", "[").replace("]]", "]").replace("]", "]\n"))
+
+    print("\n\n\nHellu:\n")
+    draw(board)
 
 
 if __name__ == '__main__':

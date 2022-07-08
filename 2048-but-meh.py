@@ -76,15 +76,13 @@ def merge(key):
     global board
     
     if key == "r":
-        mirror_x(board)
         for y in range(len(board)):
-            for x in range(len(board[y]) - 1):
+            for x in range(len(board[y]) - 1, 0, -1):
                 mainCell = board[y][x]
-                secondaryCell = board[y][x + 1]
+                secondaryCell = board[y][x - 1]
                 if mainCell == secondaryCell:
                     board[y][x] = mainCell + secondaryCell
-                    board[y][x + 1] = 0
-        mirror_x(board)
+                    board[y][x - 1] = 0
     
     if key == "l":
         for y in range(len(board)):
@@ -96,15 +94,13 @@ def merge(key):
                     board[y][x + 1] = 0
 
     if key == "d":
-        mirror_y(board)
-        for y in range(len(board) - 1):
+        for y in range(len(board) - 1, 0, -1):
             for x in range(len(board[y])):
                 mainCell = board[y][x]
-                secondaryCell = board[y + 1][x]
+                secondaryCell = board[y - 1][x]
                 if mainCell == secondaryCell:
                     board[y][x] = mainCell + secondaryCell
-                    board[y + 1][x] = 0
-        mirror_y(board)
+                    board[y - 1][x] = 0
     
     if key == "u":
         for y in range(len(board) - 1):
