@@ -112,6 +112,20 @@ def merge(key):
                     board[y + 1][x] = 0
 
 
+def save(oldBoard):
+    global savedBoard
+    for y in range(len(oldBoard)):
+        for x in range(len(oldBoard[y])):
+            savedBoard[y][x] = oldBoard[y][x]
+
+
+def undo(save):
+    global board
+    for y in range(len(save)):
+        for x in range(len(save[y])):
+            board[y][x] = save[y][x]
+
+
 def draw(board):
     text = ""
     list = []
@@ -156,33 +170,43 @@ def main():
         
         if is_pressed("right"):
             if pressed == "r":
-                pressed = "rr"
-            elif pressed != "rr":
+                pressed = "!r"
+            elif pressed != "!r":
                 pressed = "r"
         elif is_pressed("left"):
             if pressed == "l":
-                pressed = "ll"
-            elif pressed != "ll":
+                pressed = "!l"
+            elif pressed != "!l":
                 pressed = "l"
         elif is_pressed("up"):
             if pressed == "u":
-                pressed = "uu"
-            elif pressed != "uu":
+                pressed = "!u"
+            elif pressed != "!u":
                 pressed = "u"
         elif is_pressed("down"):
             if pressed == "d":
-                pressed = "dd"
-            elif pressed != "dd":
+                pressed = "!d"
+            elif pressed != "!d":
                 pressed = "d"
+        elif is_pressed("backspace"):
+            if pressed == "b":
+                pressed = "!b"
+            elif pressed != "!b":
+                pressed = "b"
         else:
             pressed = ""
 
         if pressed in ("r", "l", "u", "d"):
+            save(board)
             move(pressed)
             merge(pressed)
             move(pressed)
             spawn()
             draw(board)
+        elif pressed == "b":
+            undo(savedBoard)
+            draw(board)
+            
         sleep(1/FPS)
     
 

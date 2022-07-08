@@ -8,4 +8,3 @@ please don't do illegal moves, i didn't add a way to check legal moves to spawn 
 
 # Known Issues
 - no way of checking if a move was legal in order to spawn a new number
-- there's no undo button
