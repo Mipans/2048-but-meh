@@ -1,19 +1,14 @@
 from keyboard import is_pressed
+import os
 from time import sleep
 from random import randrange, choice
-from list_manipulation_functions import rotate, legal
+from list_manipulation_functions import rotate, is_same
 
 FPS = 60
+boardLen = 4
 run = True
-'''
-board = [
-        [131072, 65536, 32768, 16384],
-        [8192, 4096, 2048, 1024],
-        [64, 128, 256, 512],
-        [32, 16, 0, 0]
-    ]
-'''
-(board, savedBoard, temp, boardLen) = ([], [], [], 4)
+
+(board, savedBoard, temp) = ([], [], [])
 for y in range(boardLen):
     board.append([])
     savedBoard.append([])
@@ -22,28 +17,34 @@ for y in range(boardLen):
         board[y].append(0)
         savedBoard[y].append(0)
         temp[y].append(0)
-
+"""
+board = [
+        [2**16, 2**15, 2**14, 2**13],
+        [2**9, 2**10, 2**11, 2**12],
+        [2**8, 2**7, 2**6, 2**5],
+        [0, 0, 0, 0]
+    ]
+boardLen = 4
+"""
 
 def spawn():
     global board
     list = []
-    for y in range(0, len(board)):
-        for x in range(0, len(board[y])):
+    for y in range(len(board)):
+        for x in range(len(board[y])):
             if board[y][x] == 0:
                 list.append([y, x])
     
     if len(list) <= 1:
         cell = list[0]
     else:
-        cell = list[randrange(0, len(list)-1)]
+        cell = list[randrange(0, len(list))]
     board[cell[0]].pop(cell[1])
     board[cell[0]].insert(cell[1], choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4]))
 
 
-def move(key, n):
-    global board, suc
-    if n == 1:
-        suc = False
+def move(key):
+    global board
     oldBoard = []
     for y in range(boardLen):
         oldBoard.append([])
@@ -83,11 +84,6 @@ def move(key, n):
                         column.append(0)
             board[i] = column
         board = rotate(board)
-
-    for y in range(len(board)):
-        for x in range(len(board[y])):
-            if board[y][x] != oldBoard[y][x]:
-                suc = True
 
 
 def merge(key):
@@ -130,13 +126,6 @@ def merge(key):
                     board[y + 1][x] = 0
 
 
-def undo(save):
-    global board
-    for y in range(len(save)):
-        for x in range(len(save[y])):
-            board[y][x] = save[y][x]
-
-
 def draw(board):
     text = ""
     list = []
@@ -146,22 +135,27 @@ def draw(board):
         for x in range(len(board[y])):
             if lenght < len(str(board[y][x])):
                 lenght = len(str(board[y][x]))
-
+    
+    list.append("┌──" + (boardLen-1)*(lenght*"─" + "┬──") + lenght*"─" + "┐\n")
     for y in range(len(board)):
-        list.append("[")
+        list.append("| ")
         for x in range(len(board[y])):
             cell = str(board[y][x])
             if cell == "0":
-                cell = "_"
+                cell = " "
             c = " "*((lenght - len(cell))//2) + cell + " "*(lenght - len(cell) - (lenght - len(cell))//2)
             list.append(c)
-            list.append(" ")
-        list.append("]\n")
-    
+            if x<len(board[y])-1:
+                list.append(" | ")
+        list.append(" |\n")
+        if y<len(board)-1:
+            list.append("├──" + (boardLen-1)*(lenght*"─" + "┼──") + lenght*"─" + "┤\n")
+        else:
+            list.append("└──" + (boardLen-1)*(lenght*"─" + "┴──") + lenght*"─" + "┘\n")
     for t in list:
         text += t
-    text.replace("0", "_")
-    print(f"{text}\n")
+    os.system(f"mode {(lenght+3)*boardLen+1},{boardLen*2+3}")
+    print(f"\n{text}")
 
 
 def quit():
@@ -172,8 +166,8 @@ def quit():
 
 def main():
     spawn()
+    os.system('cls')
     draw(board)
-    suc = False
     
     while run:
         quit()
@@ -212,20 +206,22 @@ def main():
             for y in range(len(board)):
                 for x in range(len(board[y])):
                     temp[y][x] = board[y][x]
-            move(pressed, 1)
+            move(pressed)
             merge(pressed)
-            move(pressed, 2)
-            suc = legal(board, temp)
-            if suc:
+            move(pressed)
+            if is_same(board, temp):
                 for y in range(len(temp)):
                     for x in range(len(temp[y])):
                         savedBoard[y][x] = temp[y][x]
                 spawn()
+                os.system('cls')
                 draw(board)
         elif pressed == "b":
-            undo(savedBoard)
+            for y in range(len(savedBoard)):
+                for x in range(len(savedBoard[y])):
+                    board[y][x] = savedBoard[y][x]
+            os.system('cls')
             draw(board)
-            
         sleep(1/FPS)
     
 
