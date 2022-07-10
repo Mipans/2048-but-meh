@@ -13,13 +13,15 @@ board = [
         [32, 16, 0, 0]
     ]
 '''
-(board, savedBoard, boardLen) = ([], [], 4)
+(board, savedBoard, temp, boardLen) = ([], [], [], 4)
 for y in range(boardLen):
     board.append([])
     savedBoard.append([])
+    temp.append([])
     for x in range(boardLen):
         board[y].append(0)
         savedBoard[y].append(0)
+        temp[y].append(0)
 
 
 def spawn():
@@ -128,13 +130,6 @@ def merge(key):
                     board[y + 1][x] = 0
 
 
-def save(oldBoard):
-    global savedBoard
-    for y in range(len(oldBoard)):
-        for x in range(len(oldBoard[y])):
-            savedBoard[y][x] = oldBoard[y][x]
-
-
 def undo(save):
     global board
     for y in range(len(save)):
@@ -214,12 +209,17 @@ def main():
             pressed = ""
 
         if pressed in ("r", "l", "u", "d"):
-            save(board)
+            for y in range(len(board)):
+                for x in range(len(board[y])):
+                    temp[y][x] = board[y][x]
             move(pressed, 1)
             merge(pressed)
             move(pressed, 2)
-            suc = legal(board, savedBoard)
+            suc = legal(board, temp)
             if suc:
+                for y in range(len(temp)):
+                    for x in range(len(temp[y])):
+                        savedBoard[y][x] = temp[y][x]
                 spawn()
                 draw(board)
         elif pressed == "b":

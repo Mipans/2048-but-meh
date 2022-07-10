@@ -9,4 +9,4 @@ you CAN do illegal moves! i DID add a way to check legal moves to spawn a new nu
 - a keyboard
 
 # Known Issues
-- when you press a movement key even it isn't a legal move, and the board actually doesn't change, it still saves the board making it impossible to undo.
+-currently no known issues-
