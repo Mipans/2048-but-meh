@@ -1,8 +1,9 @@
 from keyboard import is_pressed
 import os
+from math import log
 from time import sleep
 from random import randrange, choice
-from list_manipulation_functions import rotate, is_same
+from list_manipulation_functions import rotate, is_same, paint
 
 FPS = 60
 boardLen = 4
@@ -17,17 +18,17 @@ for y in range(boardLen):
         board[y].append(0)
         savedBoard[y].append(0)
         temp[y].append(0)
-"""
+'''
 board = [
         [2**16, 2**15, 2**14, 2**13],
         [2**9, 2**10, 2**11, 2**12],
         [2**8, 2**7, 2**6, 2**5],
-        [0, 0, 0, 0]
+        [2**2, 2**2, 2**3, 2**4]
     ]
 boardLen = 4
-"""
+'''
 
-def spawn():
+def spawn(cheat):
     global board
     list = []
     for y in range(len(board)):
@@ -40,7 +41,12 @@ def spawn():
     else:
         cell = list[randrange(0, len(list))]
     board[cell[0]].pop(cell[1])
-    board[cell[0]].insert(cell[1], choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4]))
+    if cheat == 4:
+        board[cell[0]].insert(cell[1], 4)
+    elif cheat == 2:
+        board[cell[0]].insert(cell[1], 2)
+    else:
+        board[cell[0]].insert(cell[1], choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4]))
 
 
 def move(key):
@@ -136,22 +142,23 @@ def draw(board):
             if lenght < len(str(board[y][x])):
                 lenght = len(str(board[y][x]))
     
-    list.append("┌──" + (boardLen-1)*(lenght*"─" + "┬──") + lenght*"─" + "┐\n")
+    list.append(".——" + (boardLen-1)*(lenght*"—" + ".——") + lenght*"—" + ".\n")
     for y in range(len(board)):
         list.append("| ")
         for x in range(len(board[y])):
-            cell = str(board[y][x])
-            if cell == "0":
-                cell = " "
-            c = " "*((lenght - len(cell))//2) + cell + " "*(lenght - len(cell) - (lenght - len(cell))//2)
+            if board[y][x] != 0:
+                cell = paint(str(board[y][x]), int((log(board[y][x], 2)+1)//2)+1)
+            else:
+                cell = paint(" ", 0)
+            c = " "*(((lenght+10) - len(cell))//2) + cell + " "*((lenght+10) - len(cell) - ((lenght+10) - len(cell))//2)
             list.append(c)
             if x<len(board[y])-1:
                 list.append(" | ")
         list.append(" |\n")
         if y<len(board)-1:
-            list.append("├──" + (boardLen-1)*(lenght*"─" + "┼──") + lenght*"─" + "┤\n")
+            list.append("|——" + (boardLen-1)*(lenght*"—" + ".——") + lenght*"—" + "|\n")
         else:
-            list.append("└──" + (boardLen-1)*(lenght*"─" + "┴──") + lenght*"─" + "┘\n")
+            list.append("'——" + (boardLen-1)*(lenght*"—" + "'——") + lenght*"—" + "'\n")
     for t in list:
         text += t
     os.system(f"mode {(lenght+3)*boardLen+1},{boardLen*2+3}")
@@ -165,7 +172,8 @@ def quit():
 
 
 def main():
-    spawn()
+    spawn(0)
+    spawn(0)
     os.system('cls')
     draw(board)
     
@@ -173,6 +181,12 @@ def main():
         quit()
         if run == False:
             break
+
+        hehe = 0
+        if is_pressed("2"):
+            hehe = 2
+        elif is_pressed("4"):
+            hehe = 4
         
         if is_pressed("right"):
             if pressed == "r":
@@ -213,7 +227,7 @@ def main():
                 for y in range(len(temp)):
                     for x in range(len(temp[y])):
                         savedBoard[y][x] = temp[y][x]
-                spawn()
+                spawn(hehe)
                 os.system('cls')
                 draw(board)
         elif pressed == "b":
