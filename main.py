@@ -3,7 +3,7 @@ import os
 from math import log
 from time import sleep
 from random import randrange, choice
-from list_manipulation_functions import rotate, is_same, paint
+from functions import rotate, is_same, paint
 
 FPS = 60
 boardLen = 4
