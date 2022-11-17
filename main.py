@@ -8,6 +8,7 @@ from functions import rotate, is_same, paint
 FPS = 60
 boardLen = 4
 run = True
+saveFile = open("data", "a").close
 
 (board, savedBoard, temp) = ([], [], [])
 for y in range(boardLen):
@@ -165,6 +166,39 @@ def draw(board):
     print(f"\n{text}")
 
 
+def save_game():
+    if is_pressed('ctrl'):
+        if is_pressed('s'):
+            # save the current board
+            cells = list()
+            for y in range(boardLen):
+                row = board[y]
+                for x in range(len(row)):
+                    cell = row[x]
+                    cells.append(str(cell)+'\n')
+            
+            saveFile = open("data", "w")
+            saveFile.writelines(cells)
+            saveFile.close()
+
+
+def load_game():
+    global board
+    # load the previously saved game
+    saveFile = open("data", "r")
+    content = saveFile.readlines()
+    saveFile.close()
+    cells = []
+    for i in range(boardLen**2):
+        cells.append(int(content[i]))
+    for y in range(boardLen):
+        row = list()
+        for x in range(boardLen):
+            row.append(cells[y*boardLen+x])
+        board[y] = row.copy()
+                
+
+
 def quit():
     global run
     if is_pressed("esc"):
@@ -179,6 +213,8 @@ def main():
     
     while run:
         quit()
+        save_game()
+
         if run == False:
             break
 
@@ -209,10 +245,15 @@ def main():
             elif pressed != "!d":
                 pressed = "d"
         elif is_pressed("backspace"):
-            if pressed == "b":
-                pressed = "!b"
-            elif pressed != "!b":
-                pressed = "b"
+            if pressed == "undo":
+                pressed = "!undo"
+            elif pressed != "!undo":
+                pressed = "undo"
+        elif is_pressed("ctrl") and is_pressed("l"):
+            if pressed == "load":
+                pressed = "!load"
+            elif pressed != "!load":
+                pressed = "load"
         else:
             pressed = ""
 
@@ -230,12 +271,17 @@ def main():
                 spawn(hehe)
                 os.system('cls')
                 draw(board)
-        elif pressed == "b":
+        elif pressed == "undo":
             for y in range(len(savedBoard)):
                 for x in range(len(savedBoard[y])):
                     board[y][x] = savedBoard[y][x]
             os.system('cls')
             draw(board)
+        elif pressed == "load":
+            load_game()
+            draw(board)
+        save_game()
+
         sleep(1/FPS)
     
 
