@@ -2,11 +2,12 @@ from keyboard import is_pressed
 import os
 from math import log
 from time import sleep
-from random import randrange, choice
+from random import randrange, choices
 from functions import rotate, is_same, paint
 
 FPS = 60
 boardLen = 4
+mode = "menu"
 run = True
 saveFile = open("data", "a").close
 
@@ -47,7 +48,7 @@ def spawn(cheat):
     elif cheat == 2:
         board[cell[0]].insert(cell[1], 2)
     else:
-        board[cell[0]].insert(cell[1], choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4]))
+        board[cell[0]].insert(cell[1], choices([2,4], (0.9, 0.1), k=1)[0])
 
 
 def move(key):
@@ -133,7 +134,26 @@ def merge(key):
                     board[y + 1][x] = 0
 
 
-def draw(board):
+def menu(sel):
+    global mode, board, run
+    if sel == 0:
+        mode = "game"
+        load_game()
+        draw_board(board)
+    
+    elif sel == 1:
+        mode = "game"
+        for y in range(boardLen):
+            for x in range(boardLen):
+                board[y][x] = 0
+        spawn(0)
+        spawn(0)
+        draw_board(board)
+
+    elif sel == 2:
+        run = False
+
+def draw_board(board):
     text = ""
     list = []
     lenght = 0
@@ -157,29 +177,50 @@ def draw(board):
                 list.append(" | ")
         list.append(" |\n")
         if y<len(board)-1:
-            list.append("|——" + (boardLen-1)*(lenght*"—" + ".——") + lenght*"—" + "|\n")
+            list.append("|——" + (boardLen-1)*(lenght*"—" + "+——") + lenght*"—" + "|\n")
         else:
             list.append("'——" + (boardLen-1)*(lenght*"—" + "'——") + lenght*"—" + "'\n")
     for t in list:
         text += t
     os.system(f"mode {(lenght+3)*boardLen+1},{boardLen*2+3}")
+    os.system('cls')
     print(f"\n{text}")
 
 
+def draw_menu(sel):
+    if sel == 0: arrow = [">", " ", " "]
+    if sel == 1: arrow = [" ", ">", " "]
+    if sel == 2: arrow = [" ", " ", ">"]
+    os.system(f"mode {27},{boardLen*2+5}")
+    os.system('cls')
+    print(
+    f"""
+ .———————————————————————.
+ |  ___  ____   __  ___  |
+ | (__ \/    \ /  || _ | |
+ | / __/| [] |/_' || _ | |
+ | \___)\____/  |_||___| |
+ |                       |
+ '———————————————————————'
+
+{arrow[0]} CONTINIUE
+{arrow[1]} RESET
+{arrow[2]} QUIT
+    """)
+
+
 def save_game():
-    if is_pressed('ctrl'):
-        if is_pressed('s'):
-            # save the current board
-            cells = list()
-            for y in range(boardLen):
-                row = board[y]
-                for x in range(len(row)):
-                    cell = row[x]
-                    cells.append(str(cell)+'\n')
+    # save the current board
+    cells = list()
+    for y in range(boardLen):
+        row = board[y]
+        for x in range(len(row)):
+            cell = row[x]
+            cells.append(str(cell)+'\n')
             
-            saveFile = open("data", "w")
-            saveFile.writelines(cells)
-            saveFile.close()
+    saveFile = open("data", "w")
+    saveFile.writelines(cells)
+    saveFile.close()
 
 
 def load_game():
@@ -196,91 +237,120 @@ def load_game():
         for x in range(boardLen):
             row.append(cells[y*boardLen+x])
         board[y] = row.copy()
-                
-
-
-def quit():
-    global run
-    if is_pressed("esc"):
-        run = False
 
 
 def main():
-    spawn(0)
-    spawn(0)
-    os.system('cls')
-    draw(board)
+    global mode
+    selected = 0
+    draw_menu(selected)
     
     while run:
-        quit()
-        save_game()
 
         if run == False:
             break
 
-        hehe = 0
-        if is_pressed("2"):
-            hehe = 2
-        elif is_pressed("4"):
-            hehe = 4
-        
-        if is_pressed("right"):
-            if pressed == "r":
-                pressed = "!r"
-            elif pressed != "!r":
-                pressed = "r"
-        elif is_pressed("left"):
-            if pressed == "l":
-                pressed = "!l"
-            elif pressed != "!l":
-                pressed = "l"
-        elif is_pressed("up"):
-            if pressed == "u":
-                pressed = "!u"
-            elif pressed != "!u":
-                pressed = "u"
-        elif is_pressed("down"):
-            if pressed == "d":
-                pressed = "!d"
-            elif pressed != "!d":
-                pressed = "d"
-        elif is_pressed("backspace"):
-            if pressed == "undo":
-                pressed = "!undo"
-            elif pressed != "!undo":
-                pressed = "undo"
-        elif is_pressed("ctrl") and is_pressed("l"):
-            if pressed == "load":
-                pressed = "!load"
-            elif pressed != "!load":
-                pressed = "load"
-        else:
-            pressed = ""
+        # MENU
+        if mode == "menu":
 
-        if pressed in ("r", "l", "u", "d"):
-            for y in range(len(board)):
-                for x in range(len(board[y])):
-                    temp[y][x] = board[y][x]
-            move(pressed)
-            merge(pressed)
-            move(pressed)
-            if is_same(board, temp):
-                for y in range(len(temp)):
-                    for x in range(len(temp[y])):
-                        savedBoard[y][x] = temp[y][x]
-                spawn(hehe)
-                os.system('cls')
-                draw(board)
-        elif pressed == "undo":
-            for y in range(len(savedBoard)):
-                for x in range(len(savedBoard[y])):
-                    board[y][x] = savedBoard[y][x]
-            os.system('cls')
-            draw(board)
-        elif pressed == "load":
-            load_game()
-            draw(board)
-        save_game()
+            if is_pressed("up"):
+                if pressed == "u": pressed = "!u"
+                elif pressed != "!u": pressed = "u"
+            elif is_pressed("down"):
+                if pressed == "d": pressed = "!d"
+                elif pressed != "!d": pressed = "d"
+            elif is_pressed("enter"):
+                if pressed == "e": pressed = "!e"
+                elif pressed != "!e": pressed = "e"
+            else: pressed = ""
+            
+            if pressed == "u":
+                if selected > 0: selected -= 1
+                else: selected = 2
+                draw_menu(selected)
+
+            elif pressed == "d":
+                if selected < 2: selected += 1
+                else: selected = 0
+                draw_menu(selected)
+            
+            elif pressed == "e":
+                menu(selected)
+
+        # GAME
+        elif mode == "game":
+            hehe = 0
+            if is_pressed("2"):
+                hehe = 2
+            elif is_pressed("4"):
+                hehe = 4
+
+            if is_pressed('esc'):
+                mode = "menu"
+                draw_menu(0)
+
+            elif is_pressed("right"):
+                if pressed == "r":
+                    pressed = "!r"
+                elif pressed != "!r":
+                    pressed = "r"
+            elif is_pressed("left"):
+                if pressed == "l":
+                    pressed = "!l"
+                elif pressed != "!l":
+                    pressed = "l"
+            elif is_pressed("up"):
+                if pressed == "u":
+                    pressed = "!u"
+                elif pressed != "!u":
+                    pressed = "u"
+            elif is_pressed("down"):
+                if pressed == "d":
+                    pressed = "!d"
+                elif pressed != "!d":
+                    pressed = "d"
+            elif is_pressed("backspace"):
+                if pressed == "undo":
+                    pressed = "!undo"
+                elif pressed != "!undo":
+                    pressed = "undo"
+            elif is_pressed("ctrl") and is_pressed("l"):
+                if pressed == "load":
+                    pressed = "!load"
+                elif pressed != "!load":
+                    pressed = "load"
+            elif is_pressed("ctrl") and is_pressed("s"):
+                if pressed == "save":
+                    pressed = "!save"
+                elif pressed != "!save":
+                    pressed = "save"
+            else:
+                pressed = ""
+
+            if pressed in ("r", "l", "u", "d"):
+                for y in range(len(board)):
+                    for x in range(len(board[y])):
+                        temp[y][x] = board[y][x]
+                move(pressed)
+                merge(pressed)
+                move(pressed)
+                if is_same(board, temp):
+                    for y in range(len(temp)):
+                        for x in range(len(temp[y])):
+                            savedBoard[y][x] = temp[y][x]
+                    spawn(hehe)
+                    draw_board(board)
+
+            elif pressed == "undo":
+                for y in range(len(savedBoard)):
+                    for x in range(len(savedBoard[y])):
+                        board[y][x] = savedBoard[y][x]
+                draw_board(board)
+
+            elif pressed == "load":
+                load_game()
+                draw_board(board)
+            elif pressed == "save":
+                save_game()
 
         sleep(1/FPS)
     
