@@ -1,5 +1,3 @@
-import time 
-
 def rotate(oldList):
     newList = []
     for x in range(len(oldList)):
@@ -16,6 +14,24 @@ def is_same(list1, list2):
             if list2[y][x] != list1[y][x]:
                 return True
     return False
+
+
+def draw_list(oldList):
+    text = ""
+    list = []
+    
+    for y in range(len(oldList)):
+        list.append("[")
+        for x in range(len(oldList[y])):
+            cell = str(oldList[y][x])
+            cell = paint(cell, oldList[y][x])
+            list.append(cell)
+            list.append(" ")
+        list.append("]\n")
+    
+    for t in list:
+        text += t
+    print(f"{text}\n")
 
 
 def paint(text, color):
@@ -70,24 +86,6 @@ def paint(text, color):
     return colors[color] + str(text) + WHITE
 
 
-def draw_list(oldList):
-    text = ""
-    list = []
-    
-    for y in range(len(oldList)):
-        list.append("[")
-        for x in range(len(oldList[y])):
-            cell = str(oldList[y][x])
-            cell = paint(cell, oldList[y][x])
-            list.append(cell)
-            list.append(" ")
-        list.append("]\n")
-    
-    for t in list:
-        text += t
-    print(f"{text}\n")
-
-
 def main():
     board = [
         [0 , 1 , 2 , 3 ],
@@ -113,4 +111,5 @@ def main():
     time.sleep(999)
 
 if __name__ == '__main__':
+    import time 
     main()
